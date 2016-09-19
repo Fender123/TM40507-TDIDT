@@ -71,7 +71,10 @@ public class AttributeSet implements Cloneable {
 		AttributeSet as = new AttributeSet();
 		as.setNumberOfAttributes(getNumberOfAttributes());
 		@SuppressWarnings("unchecked")
-		ArrayList<Attribute> clonedAttributes = (ArrayList<Attribute>) ((ArrayList<Attribute>) getAttributes()).clone();
+		ArrayList<Attribute> clonedAttributes = new ArrayList<>();
+		for (Attribute attribute : getAttributes()) {
+			clonedAttributes.add(attribute);
+		}
 		as.setAttributes(clonedAttributes);
 		return as;
 	}

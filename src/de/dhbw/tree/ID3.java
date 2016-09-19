@@ -1,6 +1,7 @@
 package de.dhbw.tree;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.w3c.dom.NamedNodeMap;
 
@@ -50,7 +51,7 @@ public class ID3 {
 
 		//add new tree to node
 		//TODO get best attribute instead of first one
-		Attribute a = as.getAttributes().get(0);
+		Attribute a = as.getAttributes().get(ThreadLocalRandom.current().nextInt(as.getNumberOfAttributes() - 1));
 		as.getAttributes().remove(0);
 		as.setNumberOfAttributes(as.getNumberOfAttributes() - 1);
 		n.setAttribute(a.getName());

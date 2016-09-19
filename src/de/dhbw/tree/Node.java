@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class Node {
-	protected String attribute;
+	protected String attribute = null;
 	protected HashMap<String, Node> children = new HashMap<>();
 	protected Node parent = null;
 	protected boolean isLeaf = false;
@@ -78,15 +78,26 @@ public class Node {
     }
 
     private void print(String prefix, boolean isTail) {
-        System.out.println(prefix + (isTail ? "--- " : "--- ") +  (attribute == null ? "" : attribute) + (isLeaf ? (" --> " + (classification ? "1" : "0")) : ""));
+    	if(attribute != null){
+    		System.out.println(prefix + attribute + ":");
+    	}
+    	if(isLeaf){
+    		System.out.println(prefix + " --> " + (classification ? "1" : "0"));
+    	}
         
         Iterator it = children.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry)it.next();
-            if(it.hasNext()){
-            	((Node) pair.getValue()).print(prefix + (isTail ? "    " : "|   ") + pair.getKey() + ": ", false);
+            System.out.println(prefix + "  " + pair.getKey());
+            /*if(it.hasNext()){
+            	((Node) pair.getValue()).print(prefix + (isTail ? "       " : "   |   "), false);
             }else{
-            	((Node) pair.getValue()).print(prefix + (isTail ?"    " : "|   ") + pair.getKey() + ": ", true);
+            	((Node) pair.getValue()).print(prefix + (isTail ?"       " : "   |   "), true);
+            }*/
+            if(it.hasNext()){
+            	((Node) pair.getValue()).print(prefix + "  |  ", false);
+            }else{
+            	((Node) pair.getValue()).print(prefix + "  |  ", true);
             }
             it.remove(); // avoids a ConcurrentModificationException
         }

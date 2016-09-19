@@ -9,7 +9,7 @@ public class Node {
 	protected HashMap<String, Node> children = new HashMap<>();
 	protected Node parent = null;
 	protected boolean isLeaf = false;
-	protected boolean classification = false;
+	protected boolean classification = true;
 	
 	public String getAttribute() {
 		return attribute;
@@ -99,7 +99,7 @@ public class Node {
             }else{
             	((Node) pair.getValue()).print(prefix + "  |  ", true);
             }
-            it.remove(); // avoids a ConcurrentModificationException
+//            it.remove(); // avoids a ConcurrentModificationException
         }
     }
 }

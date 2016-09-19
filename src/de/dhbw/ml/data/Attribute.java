@@ -24,4 +24,20 @@ public class Attribute {
 	public void setNumberOfValues(int numberOfValues) {
 		this.numberOfValues = numberOfValues;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (String s : values) {
+			if(!first){
+				sb.append(", ");
+			}
+			if(first){
+				first = false;
+			}
+			sb.append(s);
+		}
+		return String.format("%s (%d): %s", name, getNumberOfValues(), sb.toString());
+	}
 }

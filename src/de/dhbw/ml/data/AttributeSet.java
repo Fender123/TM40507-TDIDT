@@ -70,13 +70,23 @@ public class AttributeSet implements Cloneable {
 	public AttributeSet clone() throws CloneNotSupportedException {
 		AttributeSet as = new AttributeSet();
 		as.setNumberOfAttributes(getNumberOfAttributes());
-		@SuppressWarnings("unchecked")
 		ArrayList<Attribute> clonedAttributes = new ArrayList<>();
 		for (Attribute attribute : getAttributes()) {
 			clonedAttributes.add(attribute);
 		}
 		as.setAttributes(clonedAttributes);
 		return as;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (Attribute attribute : attributes) {
+			sb.append("\t(");
+			sb.append(attribute.toString());
+			sb.append(")\n");
+		}
+		return String.format("AttributeSet (%d):\n%s", getNumberOfAttributes(), sb.toString());
 	}
 	
 }

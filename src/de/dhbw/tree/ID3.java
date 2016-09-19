@@ -51,8 +51,10 @@ public class ID3 {
 
 		//add new tree to node
 		//TODO get best attribute instead of first one
-		Attribute a = as.getAttributes().get(ThreadLocalRandom.current().nextInt(as.getNumberOfAttributes() - 1));
-		as.getAttributes().remove(0);
+		System.out.println(as.toString());
+		int attrNum = ThreadLocalRandom.current().nextInt(as.getNumberOfAttributes() - 1);
+		Attribute a = as.getAttributes().get(attrNum);
+		as.getAttributes().remove(attrNum);
 		as.setNumberOfAttributes(as.getNumberOfAttributes() - 1);
 		n.setAttribute(a.getName());
 		

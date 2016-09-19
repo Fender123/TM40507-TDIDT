@@ -48,25 +48,42 @@ public class Application {
 		ID3 tree = new ID3(traningSet, attribSet);
 		Node root = tree.buildTree();
 		
-		root.print();
-		System.exit(1);
-		
 		System.out.println("Tree completed");
+		
+		root.print();
+		//System.exit(1);
 		
 		System.out.println("Starting test");
 		int numCorrect = 0;
 		int numWrong = 0;
+		int numFalsePositive = 0;
+		int numFalseNegative = 0;
+		int numTruePositive = 0;
+		int numTrueNegative = 0;
 		for (DataItem di : testSet.getItems()) {
 			System.out.println(di.toString());
 			boolean classificationRes = tree.classify(root, di);
+			System.out.println("Class res: " + (classificationRes ? "1" : "0"));
 			if(classificationRes == di.getTeacher()){
 				numCorrect++;
 				System.out.println("correct");
+				if(di.getTeacher() == true && classificationRes == true){
+					numTruePositive++;
+				}else{
+					numTrueNegative++;
+				}
 			}else{
 				numWrong++;
 				System.out.println("wrong");
+				if(di.getTeacher() == true && classificationRes == false){
+					numFalsePositive++;
+				}else{
+					numFalseNegative++;
+				}
 			}
 		}
+		
+		System.out.format("Classified %d entries:\n\n\tcorrect: %d\n\twrong: %d\n\n\tfalse positives: %d\n\tfalse negatives: %d\n\ttrue positives: %d\n\ttrue negatives: %d", testSet.getNumberOfExamples(), numCorrect, numWrong, numFalsePositive, numFalseNegative, numTruePositive, numTrueNegative);
 	}
 
 	protected static void readArgs(String[] args) {

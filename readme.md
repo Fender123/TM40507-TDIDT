@@ -20,7 +20,8 @@ java -jar tdidt.jar g001-1.CSV mietkartei_attribute.csv
 Um die DEBUG Ausgaben (der errechnete Baum, einzelne Ausgabe der Testfälle) zu aktiveren, muss die Umgebungsvariable *TDIDT_DEBUG* auf den Wert *true* gesetz werden.
 ```
 # Windows
-set TDIDT_DEBUG=true && java -jar tdidt.jar
+set TDIDT_DEBUG=true
+java -jar tdidt.jar
 # Linux/Unix
 TDIDT_DEBUG=true java -jar tdidt.jar
 ```

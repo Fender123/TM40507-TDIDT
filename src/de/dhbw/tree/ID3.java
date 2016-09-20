@@ -3,9 +3,6 @@ package de.dhbw.tree;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.w3c.dom.NamedNodeMap;
-
-import de.dhbw.ml.Main;
 import de.dhbw.ml.data.Attribute;
 import de.dhbw.ml.data.AttributeSet;
 import de.dhbw.ml.data.AttributeValuePair;

@@ -2,7 +2,7 @@ package de.dhbw.tree;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 
 public class Node {
 	protected String attribute = null;
@@ -85,21 +85,15 @@ public class Node {
     		System.out.println(prefix + " --> " + (classification ? "1" : "0"));
     	}
         
-        Iterator it = children.entrySet().iterator();
+        Iterator<Entry<String, Node>> it = children.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
+            Entry<String, Node> pair = it.next();
             System.out.println(prefix + "  " + pair.getKey());
-            /*if(it.hasNext()){
-            	((Node) pair.getValue()).print(prefix + (isTail ? "       " : "   |   "), false);
-            }else{
-            	((Node) pair.getValue()).print(prefix + (isTail ?"       " : "   |   "), true);
-            }*/
             if(it.hasNext()){
             	((Node) pair.getValue()).print(prefix + "  |  ", false);
             }else{
             	((Node) pair.getValue()).print(prefix + "  |  ", true);
             }
-//            it.remove(); // avoids a ConcurrentModificationException
         }
     }
 }

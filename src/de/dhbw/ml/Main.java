@@ -9,12 +9,28 @@ import de.dhbw.ml.data.DataSet;
 import de.dhbw.tree.ID3;
 import de.dhbw.tree.Node;
 
-public class Application {
+public class Main {
 	
 	protected static String sourceFilename = "mietkartei.CSV";
 	protected static String attribFilename = "Attribute_Mietkartei.txt";
+	
+	public static boolean DEBUG = false;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
+		String debugEnv = System.getenv("TDIDT_DEBUG");
+		if(debugEnv != null && debugEnv.toLowerCase().equals("true")){
+			DEBUG = true;
+		}
+		
+		System.out.println("Usage:");
+		System.out.println("java tdidt.jar dataSource.csv attributeSource.txt");
+		System.out.println("if the one or both parameters are omitted it will fall back to hardcoded default filenames.");
+		System.out.println();
+		if(DEBUG){
+			System.out.println("Debug output enabled!");
+			System.out.println();
+		}
+		
 		readArgs(args);
 		
 		File sourceFile = new File(sourceFilename);
@@ -44,15 +60,21 @@ public class Application {
 			System.out.println("Error reading attrib file! Exiting...");
 			return;
 		}
-		
+
+		long start = System.nanoTime();
 		ID3 tree = new ID3(traningSet, attribSet);
 		Node root = tree.buildTree();
+		long end = System.nanoTime();
+		long duration = end - start;
 		
-		System.out.println("Tree completed");
+		System.out.format("Tree completed in %.2fms\n", ((double) duration / 1000000.0));
+		System.out.println();
 		
-		root.print();
-		//System.exit(1);
+		if(DEBUG){
+			root.print();
+		}
 		
+		System.out.println();
 		System.out.println("Starting test");
 		int numCorrect = 0;
 		int numWrong = 0;
@@ -61,12 +83,18 @@ public class Application {
 		int numTruePositive = 0;
 		int numTrueNegative = 0;
 		for (DataItem di : testSet.getItems()) {
-			System.out.println(di.toString());
+			if(DEBUG){
+				System.out.println(di.toString());
+			}
 			boolean classificationRes = tree.classify(root, di);
-			System.out.println("Class res: " + (classificationRes ? "1" : "0"));
+			if(DEBUG){
+				System.out.println("Class res: " + (classificationRes ? "1" : "0"));
+			}
 			if(classificationRes == di.getTeacher()){
 				numCorrect++;
-				System.out.println("correct");
+				if(DEBUG){
+					System.out.println("correct");
+				}
 				if(di.getTeacher() == true && classificationRes == true){
 					numTruePositive++;
 				}else{
@@ -74,7 +102,9 @@ public class Application {
 				}
 			}else{
 				numWrong++;
-				System.out.println("wrong");
+				if(DEBUG){
+					System.out.println("wrong");
+				}
 				if(di.getTeacher() == true && classificationRes == false){
 					numFalsePositive++;
 				}else{
@@ -83,7 +113,7 @@ public class Application {
 			}
 		}
 		
-		System.out.format("Classified %d entries:\n\n\tcorrect: %d\n\twrong: %d\n\n\tfalse positives: %d\n\tfalse negatives: %d\n\ttrue positives: %d\n\ttrue negatives: %d", testSet.getNumberOfExamples(), numCorrect, numWrong, numFalsePositive, numFalseNegative, numTruePositive, numTrueNegative);
+		System.out.format("\nClassified %d entries:\n\n\tcorrect: %d\n\twrong: %d\n\n\tfalse positives: %d\n\tfalse negatives: %d\n\ttrue positives: %d\n\ttrue negatives: %d\n\n", testSet.getNumberOfExamples(), numCorrect, numWrong, numFalsePositive, numFalseNegative, numTruePositive, numTrueNegative);
 	}
 
 	protected static void readArgs(String[] args) {
@@ -94,7 +124,7 @@ public class Application {
 			attribFilename = args[1];
 		}
 		
-		System.out.format("Starting with sourceFile: %s and attribFile: %s", sourceFilename, attribFilename);
+		System.out.format("Starting with sourceFile: %s and attribFile: %s\n", sourceFilename, attribFilename);
 		System.out.println();
 	}
 }

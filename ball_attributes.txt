@@ -1,0 +1,15 @@
+3
+Farbe
+3
+rot
+blau
+gelb
+Form
+3
+rund
+eckig
+eifoermig
+Alter
+2
+neu
+gebraucht

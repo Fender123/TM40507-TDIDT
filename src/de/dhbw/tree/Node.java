@@ -4,11 +4,31 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+/**
+ * Ein Knoten im Entscheidungsbaum
+ * @author Michael
+ *
+ */
 public class Node {
+	/**
+	 * Attributname
+	 */
 	protected String attribute = null;
+	/**
+	 * HasMap der Kindknoten, Key: Attributwert, Value: Kindknoten
+	 */
 	protected HashMap<String, Node> children = new HashMap<>();
+	/**
+	 * Elternknoten
+	 */
 	protected Node parent = null;
+	/**
+	 * Ist der Knoten ein Blatt?
+	 */
 	protected boolean isLeaf = false;
+	/**
+	 * Klassifikation des Knotens
+	 */
 	protected boolean classification = true;
 	
 	public String getAttribute() {
@@ -44,12 +64,20 @@ public class Node {
 	public void setParent(Node parent) {
 		this.parent = parent;
 	}
+	/**
+	 * Ist der Knoten der Wurzelknoten? (d.h. er hat keinen Elternknoten)
+	 * @return
+	 */
 	public boolean isRoot(){
 		return parent == null;
 	}
 	public Node getChild(String value) {
 		return children.get(value);
 	}
+	
+	/**
+	 * String Repräsentation des Knotens
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -73,11 +101,18 @@ public class Node {
 		return sb.toString();
 	}
 	
+	/**
+	 * Gibt den Baum auf der Konsole aus
+	 */
 	public void print() {
-        print("", true);
+        print("");
     }
 
-    private void print(String prefix, boolean isTail) {
+	/**
+	 * Rekursiver Aufruf, gibt den Knoten + alle Kindknoten aus
+	 * @param prefix
+	 */
+    private void print(String prefix) {
     	if(attribute != null){
     		System.out.println(prefix + attribute + ":");
     	}
@@ -90,9 +125,9 @@ public class Node {
             Entry<String, Node> pair = it.next();
             System.out.println(prefix + "  " + pair.getKey());
             if(it.hasNext()){
-            	((Node) pair.getValue()).print(prefix + "  |  ", false);
+            	((Node) pair.getValue()).print(prefix + "  |  ");
             }else{
-            	((Node) pair.getValue()).print(prefix + "  |  ", true);
+            	((Node) pair.getValue()).print(prefix + "  |  ");
             }
         }
     }

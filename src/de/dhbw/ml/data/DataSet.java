@@ -9,10 +9,28 @@ import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+/**
+ * Datenstruktur für Quelldaten
+ * 
+ * @author Michael
+ *
+ */
 public class DataSet {
+	/**
+	 * Anzahl Datensätze
+	 */
 	protected int numberOfExamples = 0;
+	/**
+	 * Anzahl Datensätze mit positiver Entscheidung
+	 */
 	protected int numberOfPositives = 0;
+	/**
+	 * Anzahl Datensätze mit negativer Entscheidung
+	 */
 	protected int numberOfNegatives = 0;
+	/**
+	 * Liste der Datensätze
+	 */
 	protected List<DataItem> items;
 	
 	public DataSet(){
@@ -22,24 +40,31 @@ public class DataSet {
 	public DataSet(File sourceFile) throws IOException {
 		this();
 		
+		//Trennezeichen ermitteln
 		Character seperator = guessSeparator(sourceFile);
 		
 		FileReader reader = new FileReader(sourceFile);
 		
+		//CSVReader erstellen
 		CSVReader csvReader = new CSVReader(reader, seperator);
-		String[] line;
+		String[] line;	//aktuelle Zeile
 		Boolean firstLine = true;
-		String[] headlines = null;
+		String[] headlines = null;	//Überschriften
 		while((line = csvReader.readNext())	!= null){
+			//Datei Zeile für Zeile lesen
 			if(firstLine){
+				//Erste Zeile enthält die Überschriften
 				firstLine = false;
 				headlines = line.clone();
 				continue;
 			}
 			
+			//alle anderen Zeilen enthalten je einen Datensatz
 			DataItem di = new DataItem();
+			//die Entscheidung des Teachers steht im vorletzten Feld (letztes Feld ist leer, weil die Zeile mit einem , aufhört)
 			Boolean teacher = line[line.length - 2].trim().equals("ja");
 			di.setTeacher(teacher);
+			//alle Attribute und deren Werte auslesen und speichern
 			List<AttributeValuePair> avps = new ArrayList<>();
 			int i;
 			for (i = 0; i < line.length - 2; i++) {
@@ -50,6 +75,7 @@ public class DataSet {
 			}
 			di.setAttributes(avps);
 			
+			//Datensatz hinzufügen und je nach Entscheidung den entsprechenden Zähler hochzählen
 			items.add(di);
 			numberOfExamples++;
 			if(teacher){
@@ -62,16 +88,23 @@ public class DataSet {
 		csvReader.close();
 	}
 
+	/**
+	 * Ermittelt das verwendete Trennzeichen der Eingabe csv Datei
+	 * nötig da dieses in den Beispielen nicht immer einheitlich war
+	 * @param file
+	 * @return Trennzeichen
+	 * @throws IOException
+	 */
 	protected Character guessSeparator(File file) throws IOException {
-		//guess separator (either , or ;)
+		//Trennzeichen der Eingabe csv Datei erraten (entweder , oder ;)
 		FileReader reader = new FileReader(file);
 		BufferedReader bufferedReader = new BufferedReader(reader);
-		String line = bufferedReader.readLine();
+		String line = bufferedReader.readLine();	//erste Zeile lesen
 		Character separator = ';';
 		if(line != null){
-			int countColon = line.length() - line.replace(",", "").length();
-			int countSemiColon = line.length() - line.replace(";", "").length();
-			if(countColon > countSemiColon){
+			int countColon = line.length() - line.replace(",", "").length();	//Anzahl , zählen
+			int countSemiColon = line.length() - line.replace(";", "").length();//Anzahl ; zählen
+			if(countColon > countSemiColon){	//häufigeres Zeichen wird als Trennzeichen interpretiert
 				separator = ',';
 			}
 		}
@@ -104,6 +137,12 @@ public class DataSet {
 		this.items = items;
 	}
 
+	/**
+	 * Teilt die Datensätze in die gewünschte Anzahl an Listen auf
+	 * zur besseren Nachvollziehbarkeit wird hier auf eine zufällige Aufteilung verzichtet!
+	 * @param num
+	 * @return
+	 */
 	public DataSet[] split(int num) {
 		DataSet[] sets = new DataSet[2];
 		int size = items.size() / num;
@@ -127,6 +166,12 @@ public class DataSet {
 		return sets;
 	}
 
+	/**
+	 * Filtert die Liste der Datensätze und gibt nur diese zurück die beim gewünschten Attribut den gesuchten Wert haben
+	 * @param name Name des Attributes
+	 * @param attribValue Wert des Attributes
+	 * @return
+	 */
 	public List<DataItem> getItemsWithAttribute(String name, String attribValue) {
 		List<DataItem> filteredItems = new ArrayList<>();
 		for (DataItem di : items) {
@@ -142,6 +187,9 @@ public class DataSet {
 		return filteredItems;
 	}
 	
+	/**
+	 * berechnet die Zähler anhand der Datensätze in der Liste neu
+	 */
 	public void updateCounts(){
 		numberOfExamples = items.size();
 		numberOfNegatives = 0;

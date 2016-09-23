@@ -1,5 +1,10 @@
 package de.dhbw.ml.data;
 
+/**
+ * Ein Attribut mit Namen und allen möglichen Werten
+ * @author Michael
+ *
+ */
 public class Attribute {
 	protected String name;
 	protected String[] values;
@@ -24,7 +29,11 @@ public class Attribute {
 	public void setNumberOfValues(int numberOfValues) {
 		this.numberOfValues = numberOfValues;
 	}
+
 	
+	/**
+	 * String Repräsentation der Datenstruktur
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

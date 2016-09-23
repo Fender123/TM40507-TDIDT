@@ -1,5 +1,10 @@
 package de.dhbw.ml.data;
 
+/**
+ * Ein Paar bestehend aus Attributname und Attributwert
+ * @author Michael
+ *
+ */
 public class AttributeValuePair {
 	protected String attribute;
 	protected String value;

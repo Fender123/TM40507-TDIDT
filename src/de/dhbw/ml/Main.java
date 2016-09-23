@@ -16,7 +16,8 @@ public class Main {
 	
 	public static boolean DEBUG = false;
 
-	public static void main(String[] args) {		
+	public static void main(String[] args) {	
+		// prüfen ob Debug Ausgaben aktiviert werden sollen
 		String debugEnv = System.getenv("TDIDT_DEBUG");
 		if(debugEnv != null && debugEnv.toLowerCase().equals("true")){
 			DEBUG = true;
@@ -31,91 +32,128 @@ public class Main {
 			System.out.println();
 		}
 		
+		//Programmargumente auslesen
 		readArgs(args);
 		
+		//Datei mit Quelldaten
 		File sourceFile = new File(sourceFilename);
 		
+		//Datenstruktur für Quelldaten
 		DataSet dataSet = null;
 		
 		try {
+			//Datenstruktur erstellen (liest automatisch aus Datei)
 			 dataSet = new DataSet(sourceFile);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			//bei Fehler abbrechen
 			e.printStackTrace();
 			System.out.println("Error reading source! Exiting...");
 			return;
 		}
 		
+		//Quelldaten in 2 gleich große Mengen aufteilen 
 		DataSet[] splitSets = dataSet.split(2);
-		DataSet testSet = splitSets[0];
-		DataSet traningSet = splitSets[1];
+		DataSet testSet = splitSets[0];		//Testdaten
+		DataSet traningSet = splitSets[1];	//Trainingsdaten
 		
+		//Datei mit Attributdaten
 		File attribFile = new File(attribFilename);
 		
+		//Datenstruktur für Attributdaten
 		AttributeSet attribSet = null;
 		try{
+			//Datenstruktur für Attributdaten erstellen, liest Werte aus Datei
 			attribSet = new AttributeSet(attribFile);
 		}catch(Exception e){
+			//Im Fehlerfall abbrechen
 			e.printStackTrace();
 			System.out.println("Error reading attrib file! Exiting...");
 			return;
 		}
 
+		//Zur Zeitmessung, Startzeit
 		long start = System.nanoTime();
+		//ID3 initialisieren
 		ID3 tree = new ID3(traningSet, attribSet);
+		//Entscheidungsbaum erstellen
 		Node root = tree.buildTree();
+		//Endzeit
 		long end = System.nanoTime();
+		//Berechnung der Dauer
 		long duration = end - start;
+
+		//Baum ausgeben
+		root.print();
+		System.out.println();
 		
+		//Rechenzeit für Baum ausgeben
 		System.out.format("Tree completed in %.2fms\n", ((double) duration / 1000000.0));
 		System.out.println();
 		
-		if(DEBUG){
-			root.print();
-		}
 		
-		System.out.println();
 		System.out.println("Starting test");
+		//Variablen für Auswertung der Klassifikation der Kontrolldaten initialisieren
 		int numCorrect = 0;
 		int numWrong = 0;
 		int numFalsePositive = 0;
 		int numFalseNegative = 0;
 		int numTruePositive = 0;
 		int numTrueNegative = 0;
+		//Alle Testdaten klassifizieren
 		for (DataItem di : testSet.getItems()) {
 			if(DEBUG){
 				System.out.println(di.toString());
 			}
+			//Klassifikation des Datensatzes durch den Entscheidungsbaum
 			boolean classificationRes = tree.classify(root, di);
 			if(DEBUG){
 				System.out.println("Class res: " + (classificationRes ? "1" : "0"));
 			}
+			//Prüfen des Ergebnisses
 			if(classificationRes == di.getTeacher()){
+				//Richtiges Ergebnis
 				numCorrect++;
 				if(DEBUG){
 					System.out.println("correct");
 				}
 				if(di.getTeacher() == true && classificationRes == true){
+					//True positive
 					numTruePositive++;
 				}else{
+					//True negative
 					numTrueNegative++;
 				}
 			}else{
+				//Falsches Ergebnis
 				numWrong++;
 				if(DEBUG){
 					System.out.println("wrong");
 				}
 				if(di.getTeacher() == true && classificationRes == false){
+					//False positive
 					numFalsePositive++;
 				}else{
+					//False negative
 					numFalseNegative++;
 				}
 			}
 		}
 		
-		System.out.format("\nClassified %d entries:\n\n\tcorrect: %d\n\twrong: %d\n\n\tfalse positives: %d\n\tfalse negatives: %d\n\ttrue positives: %d\n\ttrue negatives: %d\n\n", testSet.getNumberOfExamples(), numCorrect, numWrong, numFalsePositive, numFalseNegative, numTruePositive, numTrueNegative);
+		System.out.format("\nClassified %d entries:\n\n", testSet.getNumberOfExamples());
+		System.out.format("\tcorrect: %d (%.2f%%)\n", numCorrect, ((double) numCorrect / testSet.getNumberOfExamples() * 100.0));
+		System.out.format("\twrong: %d (%.2f%%)\n\n", numWrong, ((double) numWrong / testSet.getNumberOfExamples() * 100.0));
+		System.out.format("\tfalse positives: %d\n", numFalsePositive);
+		System.out.format("\tfalse negatives: %d\n", numFalseNegative);
+		System.out.format("\ttrue positives: %d\n", numTruePositive);
+		System.out.format("\ttrue negatives: %d\n\n", numTrueNegative);
+		
+		
 	}
 
+	/**
+	 * liest sourceFilename und attribFilename aus den Programmargumenten aus
+	 * @param args
+	 */
 	protected static void readArgs(String[] args) {
 		if(args.length > 0){
 			sourceFilename = args[0];

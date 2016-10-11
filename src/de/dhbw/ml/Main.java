@@ -25,7 +25,7 @@ public class Main {
 		
 		System.out.println("Usage:");
 		System.out.println("java tdidt.jar dataSource.csv attributeSource.txt");
-		System.out.println("if the one or both parameters are omitted it will fall back to hardcoded default filenames.");
+		System.out.println("if one or both parameters are omitted it will fall back to hardcoded default filenames.");
 		System.out.println();
 		if(DEBUG){
 			System.out.println("Debug output enabled!");
